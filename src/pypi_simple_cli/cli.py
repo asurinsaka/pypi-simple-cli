@@ -1,7 +1,7 @@
 import enum
-from packaging.version import parse, Version
 
 import click
+from packaging.version import Version, parse
 from pypi_simple import PyPISimple
 
 
@@ -20,7 +20,10 @@ class ReleaseStage(enum.IntEnum):
 )
 @click.option(
     "--release-stage",
-    type=click.Choice(list(i.name for i in ReleaseStage), case_sensitive=False,),
+    type=click.Choice(
+        list(i.name for i in ReleaseStage),
+        case_sensitive=False,
+    ),
     default="all",
     help="Lowest release stage",
 )
@@ -44,7 +47,12 @@ def filter_versions(ctx, package, version_prefix):
         versions = page.versions
     else:
         versions = sorted(
-            set(pkg.version or pkg.filename for pkg in page.packages if pkg.filename != 'Parent Directory'), key=parse
+            set(
+                pkg.version or pkg.filename
+                for pkg in page.packages
+                if pkg.filename != "Parent Directory"
+            ),
+            key=parse,
         )
     if version_prefix:
         versions = (v for v in versions if v.startswith(version_prefix))
@@ -52,9 +60,13 @@ def filter_versions(ctx, package, version_prefix):
     if release_stage > ReleaseStage.all:
         versions = (v for v in versions if Version(v).is_devrelease is False)
     if release_stage.value > ReleaseStage.alpha:
-        versions = (v for v in versions if Version(v).pre is None or Version(v).pre[0] != 'a')
+        versions = (
+            v for v in versions if Version(v).pre is None or Version(v).pre[0] != "a"
+        )
     if release_stage.value > ReleaseStage.beta:
-        versions = (v for v in versions if Version(v).pre is None or Version(v).pre[0] != 'b')
+        versions = (
+            v for v in versions if Version(v).pre is None or Version(v).pre[0] != "b"
+        )
     if release_stage.value > ReleaseStage.rc:
         versions = (v for v in versions if Version(v).is_prerelease is False)
 
@@ -78,7 +90,7 @@ def list_versions(ctx, package, version_prefix):
 @click.pass_context
 def latest_version(ctx, package, version_prefix):
     versions = filter_versions(ctx, package, version_prefix)
-    print(list(versions)[-1], end='')
+    print(list(versions)[-1], end="")
 
 
 main.add_command(list_versions)
