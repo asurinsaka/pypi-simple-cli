@@ -57,7 +57,7 @@ def filter_versions(ctx, package, version_prefix):
     if version_prefix:
         versions = (v for v in versions if v.startswith(version_prefix))
     release_stage = ReleaseStage[ctx.obj["release_stage"].lower()]
-    if release_stage > ReleaseStage.all:
+    if release_stage > ReleaseStage.dev:
         versions = (v for v in versions if Version(v).is_devrelease is False)
     if release_stage.value > ReleaseStage.alpha:
         versions = (
