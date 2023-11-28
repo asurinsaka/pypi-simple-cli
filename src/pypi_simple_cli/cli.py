@@ -1,4 +1,5 @@
 import enum
+import re
 
 import click
 from packaging.version import Version, parse
@@ -15,9 +16,7 @@ class ReleaseStage(enum.IntEnum):
 
 
 @click.group()
-@click.option(
-    "--endpoint", default=None, help="The base URL of the simple API instance to query"
-)
+@click.option("--endpoint", help="The base URL of the simple API instance to query")
 @click.option(
     "--release-stage",
     type=click.Choice(
@@ -27,8 +26,9 @@ class ReleaseStage(enum.IntEnum):
     default="all",
     help="Lowest release stage",
 )
+@click.option("--pattern", help="Use python regex to match the version.")
 @click.pass_context
-def main(ctx, endpoint, release_stage):
+def main(ctx, endpoint, release_stage, pattern):
     ctx.ensure_object(dict)
     if endpoint is None:
         simple = PyPISimple()
@@ -37,6 +37,7 @@ def main(ctx, endpoint, release_stage):
 
     ctx.obj["simple"] = simple
     ctx.obj["release_stage"] = release_stage
+    ctx.obj["pattern"] = pattern
 
 
 def filter_versions(ctx, package, version_prefix):
@@ -70,6 +71,9 @@ def filter_versions(ctx, package, version_prefix):
     if release_stage.value > ReleaseStage.rc:
         versions = (v for v in versions if Version(v).is_prerelease is False)
 
+    pattern = ctx.obj["pattern"]
+    if pattern:
+        versions = (v for v in versions if re.search(pattern, v))
     return versions
 
 
