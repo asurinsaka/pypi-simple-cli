@@ -3,7 +3,8 @@ import pathlib
 
 import requests_mock
 from click.testing import CliRunner
-from pypi_simple_wrapper import cli
+
+from pypi_simple_cli import cli
 
 PYPI_SIMPLE_ENDPOINT: str = "https://pypi.org/simple/"
 DATA_DIR = pathlib.Path(os.path.dirname(os.path.realpath(__file__))) / "data"
@@ -21,9 +22,9 @@ def test_list_indexd(**kwargs):
             "indexd",
         ],
     )
-    assert (
-        result.stdout
-        == "1.0.0\n1.2.3a4\n1.2.3b4\n1.2.3rc4\n1.2.3rc5\n2.13.3.dev2\n2.14.0\n3.0.2.dev6+feat.dev.2298.use.different.post.fix.for.version\n"
+    assert result.stdout == (
+        "1.0.0\n1.2.3a4\n1.2.3b4\n1.2.3rc4\n1.2.3rc5\n2.13.3.dev2\n2.14.0\n"
+        "3.0.2.dev6+feat.dev.2298.use.different.post.fix.for.version\n"
     )
 
 
