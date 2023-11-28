@@ -24,7 +24,30 @@ def test_list_indexd(**kwargs):
         ],
     )
     assert result.output == (
+        "1.0.0.dev6+feat.dev.2298.use.different.post.fix\n"
         "1.0.0\n1.2.3rc4\n1.2.3rc5\n1.2.4b4\n1.2.5a4\n2.13.3.dev2\n"
+        "3.0.2.dev6+feat.dev.2298.use.different.post.fix.for.version\n"
+    )
+
+
+@requests_mock.Mocker(kw="mock")
+@pytest.mark.parametrize(
+    "pattern", ["different.post", "different\.post", "different.*fix"]
+)
+def test_list_indexd_with_regex(pattern, **kwargs):
+    with (DATA_DIR / "fake_page.html").open() as f:
+        kwargs["mock"].get(f"{PYPI_SIMPLE_ENDPOINT}indexd/", text=f.read())
+    runner = CliRunner()
+    result = runner.invoke(
+        cli.main,
+        [
+            f"--pattern={pattern}",
+            "list",
+            "indexd",
+        ],
+    )
+    assert result.output == (
+        "1.0.0.dev6+feat.dev.2298.use.different.post.fix\n"
         "3.0.2.dev6+feat.dev.2298.use.different.post.fix.for.version\n"
     )
 
