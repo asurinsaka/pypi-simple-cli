@@ -1,11 +1,10 @@
 [project]
-name = "pypi-simple-wrapper"
+name = "pypi-simple-cli"
 dynamic = ["version"]
 description = "PyPI Simple Repository API client library wrapper"
 readme = "README.md"
 requires-python = ">=3.7"
-license = "Apache2"
-license-files = { paths = ["LICENSE"] }
+license = {file = "LICENSE"}
 authors = [
     { name = "Qiao Qiao", email = "qiaozha@gmail.com" }
 ]
@@ -39,9 +38,18 @@ classifiers = [
 
 dependencies = [
     "pypi-simple",
+    "click",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "requests-mock",
 ]
 
 [project.urls]
-"Source Code" = "https://github.com/asurinsaka/pypi-simple-wrapper
+"Source Code" = "https://github.com/asurinsaka/pypi-simple-wrapper"
 "Bug Tracker" = "https://github.com/asurinsaka/pypi-simple-wrapper/issues"
 
+[project.scripts]
+pypi-simple-cli = "pypi_simple_cli.cli:main"
