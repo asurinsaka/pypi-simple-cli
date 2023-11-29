@@ -5,7 +5,7 @@ import pytest
 import requests_mock
 from click.testing import CliRunner
 
-from pypi_simple_cli import cli
+from pypi_simple_cli import __main__
 
 PYPI_SIMPLE_ENDPOINT: str = "https://pypi.org/simple/"
 DATA_DIR = pathlib.Path(os.path.dirname(os.path.realpath(__file__))) / "data"
@@ -17,7 +17,7 @@ def test_list_indexd(**kwargs):
         kwargs["mock"].get(f"{PYPI_SIMPLE_ENDPOINT}indexd/", text=f.read())
     runner = CliRunner()
     result = runner.invoke(
-        cli.main,
+        __main__.main,
         [
             "list",
             "indexd",
@@ -39,7 +39,7 @@ def test_list_indexd_with_regex(pattern, **kwargs):
         kwargs["mock"].get(f"{PYPI_SIMPLE_ENDPOINT}indexd/", text=f.read())
     runner = CliRunner()
     result = runner.invoke(
-        cli.main,
+        __main__.main,
         [
             f"--pattern={pattern}",
             "list",
@@ -58,7 +58,7 @@ def test_latest_indexd(**kwargs):
         kwargs["mock"].get(f"{PYPI_SIMPLE_ENDPOINT}indexd/", text=f.read())
     runner = CliRunner()
     result = runner.invoke(
-        cli.main,
+        __main__.main,
         [
             "latest",
             "indexd",
@@ -86,7 +86,7 @@ def test_latest_indexd_with_stage(stage, expected, **kwargs):
         kwargs["mock"].get(f"{PYPI_SIMPLE_ENDPOINT}indexd/", text=f.read())
     runner = CliRunner()
     result = runner.invoke(
-        cli.main,
+        __main__.main,
         [
             f"--release-stage={stage}",
             "latest",
