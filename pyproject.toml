@@ -60,3 +60,4 @@ dev = [
 pypi-simple-cli = "pypi_simple_cli.__main__:main"
 
 [tool.setuptools_scm]
+local_scheme = "no-local-version"
