@@ -100,6 +100,8 @@ def list_versions(ctx, package, version_prefix):
 @click.pass_context
 def latest_version(ctx, package, version_prefix):
     versions = filter_versions(ctx, package, version_prefix)
+    if len(versions) < 1:
+        print("", end="")
     print(list(versions)[-1], end="")
 
 
