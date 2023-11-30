@@ -34,7 +34,7 @@ class ReleaseStage(enum.IntEnum):
 @click.pass_context
 def main(ctx, endpoint, release_stage, pattern):
     ctx.ensure_object(dict)
-    endpoint = os.getenv("PIP_DEFAULT_INDEX_URL", endpoint)
+    endpoint = os.getenv("PIP_INDEX_URL", endpoint)
 
     if endpoint is None:
         simple = PyPISimple()

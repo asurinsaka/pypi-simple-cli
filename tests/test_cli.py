@@ -124,7 +124,7 @@ def test_latest_indexd_with_stage(stage, expected, **kwargs):
 def test_endpoint_from_env(monkeypatch):
     url = "http://fake.com"
     with monkeypatch.context() as m:
-        m.setenv("PIP_DEFAULT_INDEX_URL", url)
+        m.setenv("PIP_INDEX_URL", url)
         runner = CliRunner()
         result = runner.invoke(
             __main__.main,
