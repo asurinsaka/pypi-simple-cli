@@ -16,9 +16,12 @@ class ReleaseStage(enum.IntEnum):
 
 
 @click.group()
-@click.option("--endpoint", help="The base URL of the simple API instance to query")
+@click.option(
+    "--endpoint", "-e", help="The base URL of the simple API instance to query"
+)
 @click.option(
     "--release-stage",
+    "-s",
     type=click.Choice(
         list(i.name for i in ReleaseStage),
         case_sensitive=False,
@@ -26,7 +29,7 @@ class ReleaseStage(enum.IntEnum):
     default="all",
     help="Lowest release stage",
 )
-@click.option("--pattern", help="Use python regex to match the version.")
+@click.option("--pattern", "-p", help="Use python regex to match the version.")
 @click.pass_context
 def main(ctx, endpoint, release_stage, pattern):
     ctx.ensure_object(dict)

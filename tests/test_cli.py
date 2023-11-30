@@ -50,6 +50,19 @@ def test_list_indexd_with_regex(pattern, **kwargs):
         "1.0.0.dev6+feat.dev.2298.use.different.post.fix\n"
         "3.0.2.dev6+feat.dev.2298.use.different.post.fix.for.version\n"
     )
+    result = runner.invoke(
+        __main__.main,
+        [
+            "-p",
+            f"{pattern}",
+            "list",
+            "indexd",
+        ],
+    )
+    assert result.output == (
+        "1.0.0.dev6+feat.dev.2298.use.different.post.fix\n"
+        "3.0.2.dev6+feat.dev.2298.use.different.post.fix.for.version\n"
+    )
 
 
 @requests_mock.Mocker(kw="mock")
@@ -85,10 +98,22 @@ def test_latest_indexd_with_stage(stage, expected, **kwargs):
     with (DATA_DIR / "fake_page.html").open() as f:
         kwargs["mock"].get(f"{PYPI_SIMPLE_ENDPOINT}indexd/", text=f.read())
     runner = CliRunner()
+
     result = runner.invoke(
         __main__.main,
-        [
+        args=[
             f"--release-stage={stage}",
+            "latest",
+            "indexd",
+        ],
+    )
+    assert result.output == expected
+
+    result = runner.invoke(
+        __main__.main,
+        args=[
+            "-s",
+            f"{stage}",
             "latest",
             "indexd",
         ],
