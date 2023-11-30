@@ -99,8 +99,9 @@ def list_versions(ctx, package, version_prefix):
 @click.argument("version_prefix", required=False)
 @click.pass_context
 def latest_version(ctx, package, version_prefix):
-    versions = filter_versions(ctx, package, version_prefix)
-    print(list(versions)[-1], end="")
+    versions = list(filter_versions(ctx, package, version_prefix))
+    if len(versions) >= 1:
+        print(versions[-1], end="")
 
 
 main.add_command(list_versions)
