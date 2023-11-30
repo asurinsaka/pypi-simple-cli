@@ -54,7 +54,7 @@ def test_list_indexd_with_regex(pattern, **kwargs):
         __main__.main,
         [
             "-p",
-            f"{pattern}",
+            pattern,
             "list",
             "indexd",
         ],
@@ -113,9 +113,49 @@ def test_latest_indexd_with_stage(stage, expected, **kwargs):
         __main__.main,
         args=[
             "-s",
-            f"{stage}",
+            stage,
             "latest",
             "indexd",
         ],
     )
     assert result.output == expected
+
+
+def test_endpoint_from_env(monkeypatch):
+    url = "http://fake.com"
+    with monkeypatch.context() as m:
+        m.setenv("PIP_DEFAULT_INDEX_URL", url)
+        runner = CliRunner()
+        result = runner.invoke(
+            __main__.main,
+            args=[
+                "latest",
+                "indexd",
+            ],
+        )
+        assert result.exception.url == f"{url}/indexd/"
+
+
+def test_endpoint_from_arg():
+    url = "http://fake.com"
+    runner = CliRunner()
+    result = runner.invoke(
+        __main__.main,
+        args=[
+            f"--endpoint={url}",
+            "latest",
+            "indexd",
+        ],
+    )
+    assert result.exception.url == f"{url}/indexd/"
+
+    result = runner.invoke(
+        __main__.main,
+        args=[
+            "-e",
+            url,
+            "latest",
+            "indexd",
+        ],
+    )
+    assert result.exception.url == f"{url}/indexd/"
