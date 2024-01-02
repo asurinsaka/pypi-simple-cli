@@ -1,9 +1,10 @@
 import enum
 import os
 import re
+from typing import List, Optional
 
 import click
-from packaging.version import Version, parse
+from packaging.version import InvalidVersion, Version, parse
 from pypi_simple import PyPISimple
 
 
@@ -46,21 +47,25 @@ def main(ctx, endpoint, release_stage, pattern):
     ctx.obj["pattern"] = pattern
 
 
-def filter_versions(ctx, package, version_prefix):
+def parse_version(version: str) -> Optional[Version]:
+    try:
+        return parse(version)
+    except InvalidVersion:
+        return None
+
+
+def filter_versions(
+    ctx: click.core.Context, package: str, version_prefix: Optional[str]
+) -> List[str]:
     with ctx.obj["simple"] as client:
         page = client.get_project_page(package)
 
     if page.versions:
         versions = page.versions
     else:
-        versions = sorted(
-            set(
-                pkg.version or pkg.filename
-                for pkg in page.packages
-                if pkg.filename != "Parent Directory"
-            ),
-            key=parse,
-        )
+        raw_versions = (pkg.version or pkg.filename for pkg in page.packages)
+        valid_versions = (v for v in raw_versions if parse_version(v) is not None)
+        versions = sorted(valid_versions, key=parse_version)
     if version_prefix:
         versions = (v for v in versions if v.startswith(version_prefix))
     release_stage = ReleaseStage[ctx.obj["release_stage"].lower()]
@@ -80,7 +85,7 @@ def filter_versions(ctx, package, version_prefix):
     pattern = ctx.obj["pattern"]
     if pattern:
         versions = (v for v in versions if re.search(pattern, v))
-    return versions
+    return list(versions)
 
 
 @click.command("list")
